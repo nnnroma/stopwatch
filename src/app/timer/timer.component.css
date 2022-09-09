@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.timer {
+    border: 1px solid blue;
+}
+
+.timer__row {
+    display: flex;
+    justify-content: center;
+    border: 1px solid red;
+}
+
+.timer__time {
+    font-size: 26px;
+    margin: 5px;
+    border: 1px solid green;
+}
+
+.timer__time-span {
+    font-size: 16px;
+}
+
+.timer__buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.timer__btn {
+    margin: 5px;
+    /* padding: 5px; */
+}
