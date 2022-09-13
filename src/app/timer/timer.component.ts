@@ -24,27 +24,27 @@ export class TimerComponent {
 
   time!: Subscription;
 
-  isWork = false;
+  isTimeRunning  = false;
 
-  condition = 'Start';
+  conditionBtn = 'Start';
 
   btnCondition = 'warn';
 
   conditionPause = false;
 
   startTimer() {
-    if(this.isWork === false) {
+    if(this.isTimeRunning  === false) {
       this.startWatch()
-      this.condition = 'Stop'
-      this.isWork = true;
+      this.conditionBtn = 'Stop'
+      this.isTimeRunning  = true;
     } else {
       this.time.unsubscribe()
       this.hours = 0;
       this.minuts = 0;
       this.seconds = 0;      
       this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.condition = 'Start'
-      this.isWork = false;
+      this.conditionBtn = 'Start'
+      this.isTimeRunning  = false;
     }
   }
 
@@ -66,8 +66,8 @@ export class TimerComponent {
 
     if(this.dblClick === true && this.oneClick === true) {
       this.time.unsubscribe()
-      this.isWork = false;
-      this.condition = 'Start'
+      this.isTimeRunning  = false;
+      this.conditionBtn = 'Start'
       this.date.setHours(this.hours, this.minuts, this.seconds);
       this.conditionPause = true;
       return
@@ -87,8 +87,8 @@ export class TimerComponent {
     this.seconds = 0;
     this.date.setHours(this.hours, this.minuts, this.seconds);
     this.startWatch()
-    this.isWork = true;
-    this.condition = 'Stop'
+    this.isTimeRunning  = true;
+    this.conditionBtn = 'Stop'
   }
 
 }
