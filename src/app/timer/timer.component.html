@@ -1,18 +1,13 @@
 <div class="timer">
-    <div class="timer__row">
-        <p class="timer__time timer__time--hours">{{this.date.getHours()}} <span class="timer__time-span">Hour(s)</span></p>
-        <p class="timer__time timer__time--minuts">{{this.date.getMinutes()}} <span class="timer__time-span">minuts</span></p>
-        <p class="timer__time timer__time--seconds">{{this.date.getSeconds()}} <span class="timer__time-span">seconds</span></p>
+    <div class="timer-row">
+        <p class="timer-time  timer-hours">{{this.date.getHours()}} <span class="timer-span">Hour(s)</span></p>
+        <p class="timer-time timer-minuts">{{this.date.getMinutes()}} <span class="timer-span">minuts</span></p>
+        <p class="timer-time timer-seconds">{{this.date.getSeconds()}} <span class="timer-span">seconds</span></p>
     </div>
 
-    <div class="timer__buttons">
-        <button (click)="startTimer()" mat-mini-fab color="primary" class="timer__btn">{{condition}}</button>
-        <button (click)="pauseTime()" mat-mini-fab color="accent" class="timer__btn">{{pauseText}}</button>
+    <div class="timer-buttons">
+        <button (click)="startTimer()" mat-mini-fab color="accent" class="timer-btn">{{condition}}</button>
+        <button (click)="weigthTimer()" mat-mini-fab color="accent" [disabled]="conditionPause"  class="timer-btn">Wait</button>
+        <button (click)="restartTime()" mat-mini-fab color="accent" class="timer-btn">Restart</button>
     </div>
 </div>
-
-<!-- <button (click)="onClick()">CLick</button> -->
-<!-- <p>{{ date | date: "HH: MM: SS"}}</p> -->
-<!-- <div class="timer__container">
-    <p>{{date}}</p>
-</div> -->

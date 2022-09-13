@@ -1,18 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { interval, subscribeOn, Subscription, timer, fromEvent, from } from 'rxjs';
 
-
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.css'],
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent {
 
-  //Ненужная переменная, просто для гита
-  bgit = 'Lorem'
-  
-  
   constructor() {
 
   }
@@ -25,7 +20,7 @@ export class TimerComponent implements OnInit {
 
   date = new Date(this.hours, this.minuts, this.seconds);  
 
-  myTimer = timer(0, 1000);
+  myTimer = timer(0, 1000) ;
 
   time!: Subscription;
 
@@ -33,56 +28,67 @@ export class TimerComponent implements OnInit {
 
   condition = 'Start';
 
+  btnCondition = 'warn';
+
+  conditionPause = false;
+
   startTimer() {
     if(this.isWork === false) {
-      this.time = this.myTimer.subscribe(() => {
-      this.seconds++
-      this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.isWork = true
-      this.condition = 'Res'
-    });
+      this.startWatch()
+      this.condition = 'Stop'
+      this.isWork = true;
     } else {
-      this.seconds = this.seconds;
-      this.date.setHours(this.hours = 0, this.minuts = 0, this.seconds = 0);
-      this.condition = 'Start';
-      this.isWork = false;
       this.time.unsubscribe()
+      this.hours = 0;
+      this.minuts = 0;
+      this.seconds = 0;      
+      this.date.setHours(this.hours, this.minuts, this.seconds);
+      this.condition = 'Start'
+      this.isWork = false;
     }
   }
 
-  isClick = false;
-  dblClick = false;
-
-
-  pauseText = 'Pause';
-
-  pauseTime() {
-    if(this.isClick === true) {
+  startWatch() {
+    this.time = this.myTimer.subscribe(() => {
+      this.seconds++
       this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.time.unsubscribe();
-      this.pauseText = 'Play';
-      
-      
-      if(this.dblClick === true) {
-        this.time = this.myTimer.subscribe(() => {
-          this.seconds++
-          this.date.setHours(this.hours, this.minuts, this.seconds);
-          this.dblClick = false;
-          this.pauseText = 'Pause';
-        })
-      }
-      this.dblClick = true;
-    }
-
-    this.isClick = true;
-    timer(300).subscribe(()=> {
-      this.isClick = false;
+      this.conditionPause = false;
     })
   }
 
+  oneClick = false;
+  dblClick = false
 
-  ngOnInit(): void {
-    console.log('void')
+  weigthTimer() {
+    if(this.oneClick === true) {
+      this.dblClick = true;
+    } 
+
+    if(this.dblClick === true && this.oneClick === true) {
+      this.time.unsubscribe()
+      this.isWork = false;
+      this.condition = 'Start'
+      this.date.setHours(this.hours, this.minuts, this.seconds);
+      this.conditionPause = true;
+      return
+    }
+
+    this.oneClick = true;
+
+    timer(300).subscribe(()=> {
+      this.oneClick = false;
+    })   
+  }
+
+  restartTime() {
+    this.time.unsubscribe()
+    this.hours = 0;
+    this.minuts = 0;
+    this.seconds = 0;
+    this.date.setHours(this.hours, this.minuts, this.seconds);
+    this.startWatch()
+    this.isWork = true;
+    this.condition = 'Stop'
   }
 
 }
