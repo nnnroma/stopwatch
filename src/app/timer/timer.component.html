@@ -1,0 +1,24 @@
+<p>{{ 1000 * ((seconds$ | async) || 0) | date: 'HH:mm:ss': 'GMT-0' }}</p> 
+
+<button 
+(click)="startTimer()" 
+mat-fab color="primary" 
+[disabled]="(onStart$ | async)">Start</button>
+
+<button
+ (click)="stopTimer()" 
+ mat-fab color="accent" 
+ [disabled]="!(seconds$ | async)">Stop</button>
+
+<button 
+(click)="pauseTimer()" 
+mat-fab color="primary" 
+[disabled]="!(seconds$ | async)" 
+[disabled]="!(onStart$ | async)">Wait</button>
+
+
+
+<button 
+(click)="resetTimer()" 
+mat-fab color="primary"  
+[disabled]="!(onStart$ | async)">Reset</button>
