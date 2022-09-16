@@ -1,94 +1,60 @@
 import { Component, OnInit } from '@angular/core';
-import { interval, subscribeOn, Subscription, timer, fromEvent, from } from 'rxjs';
+import { BehaviorSubject, Subject, timer, filter, withLatestFrom, debounceTime, map, switchMap, buffer, takeUntil, skip } from 'rxjs';
 
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.css'],
+  styleUrls: ['./timer.component.css']
 })
-export class TimerComponent {
+export class TimerComponent implements OnInit {
 
-  constructor() {
+  onStart$ = new BehaviorSubject<boolean>(false);
+  seconds$ = new BehaviorSubject<number>(0);
+  clickWait$ = new Subject<void>()
 
-  }
+  constructor() { }
 
-  hours = 0;
-  minuts = 0;
-  seconds = 0;
+  ngOnInit(): void {
+    this.onStart$.pipe(
+      filter(() => this.onStart$.getValue()),
+      withLatestFrom(this.seconds$),
+      switchMap( ([_, currentSeconds]) => {
+        return timer(0, 1000).pipe(
+          map(val => val + currentSeconds),
+          takeUntil(this.onStart$.pipe(skip(1))),
+          )
+      })
+    ).subscribe((v) => {
+      this.seconds$.next(v);
+    }) 
 
-  text:string = "pause"
+    const doubleClick = this.clickWait$.asObservable();
 
-  date = new Date(this.hours, this.minuts, this.seconds);  
-
-  myTimer = timer(0, 1000) ;
-
-  time!: Subscription;
-
-  isTimeRunning  = false;
-
-  conditionBtn = 'Start';
-
-  btnCondition = 'warn';
-
-  conditionPause = false;
-
-  startTimer() {
-    if(this.isTimeRunning  === false) {
-      this.startWatch()
-      this.conditionBtn = 'Stop'
-      this.isTimeRunning  = true;
-    } else {
-      this.time.unsubscribe()
-      this.hours = 0;
-      this.minuts = 0;
-      this.seconds = 0;      
-      this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.conditionBtn = 'Start'
-      this.isTimeRunning  = false;
-    }
-  }
-
-  startWatch() {
-    this.time = this.myTimer.subscribe(() => {
-      this.seconds++
-      this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.conditionPause = false;
+    doubleClick.pipe(
+      buffer(doubleClick.pipe(debounceTime(250))),
+      map(clicks => clicks.length),
+      filter((clicksLengs) => clicksLengs === 2),
+    ).subscribe(() => {
+      this.pauseTimer();
+      this.onStart$.next(false);
     })
   }
 
-  oneClick = false;
-  dblClick = false
-
-  weigthTimer() {
-    if(this.oneClick === true) {
-      this.dblClick = true;
-    } 
-
-    if(this.dblClick === true && this.oneClick === true) {
-      this.time.unsubscribe()
-      this.isTimeRunning  = false;
-      this.conditionBtn = 'Start'
-      this.date.setHours(this.hours, this.minuts, this.seconds);
-      this.conditionPause = true;
-      return
-    }
-
-    this.oneClick = true;
-
-    timer(300).subscribe(()=> {
-      this.oneClick = false;
-    })   
+  startTimer():void {
+    this.onStart$.next(true);
   }
 
-  restartTime() {
-    this.time.unsubscribe()
-    this.hours = 0;
-    this.minuts = 0;
-    this.seconds = 0;
-    this.date.setHours(this.hours, this.minuts, this.seconds);
-    this.startWatch()
-    this.isTimeRunning  = true;
-    this.conditionBtn = 'Stop'
+  pauseTimer():void {
+    this.clickWait$.next();
   }
 
+  stopTimer():void {
+    this.onStart$.next(false);
+    this.seconds$.next(0);
+  }
+
+  resetTimer():void {
+    this.stopTimer();
+    this.startTimer();
+  }
 }
